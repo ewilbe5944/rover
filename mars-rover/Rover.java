@@ -19,6 +19,7 @@ public class Rover
     private int numPics = 0;
     private int power = 100;
     private int health = 20;
+    private int memory = 5;
     
     /**
      * Constructor for objects of class Rover
@@ -53,15 +54,7 @@ public class Rover
      */
     private boolean willWork()
     {
-        if (this.power == 0){
-            return false;
-        }
-        else if (!this.isAlive) {
-            return false;
-        }
-        else {
-            return true;
-        }
+        return willWork(0);
     }
     
     /**
@@ -73,18 +66,7 @@ public class Rover
      */
     private boolean willWork(int powerNeeded)
     {
-        if (this.power == 0){
-            return false;
-        }
-        else if (!this.isAlive) {
-            return false;
-        }
-        else if (this.power < powerNeeded) {
-            return false;
-        }
-        else {
-            return true;
-        }
+        return this.power >= powerNeeded && this.isAlive;
     }
     
     /**
@@ -92,15 +74,7 @@ public class Rover
      */
     private void findWhatsWrong()
     {
-        if (this.power == 0){
-            System.out.println(this.name + " is out of power!");
-        }
-        else if (this.isAlive == false) {
-            System.out.println(this.name + " can't do anything. He ded!");
-        }
-        else {
-            System.out.println("This message should not appear");
-        }
+        findWhatsWrong(0);
     }
     
     /**
@@ -143,7 +117,7 @@ public class Rover
             if (power < 100) {
                 System.out.println(this.name + " charged up " + amount + "% and is at " + power + " % power!");
             }
-            if (power >= 100) {
+            else {
                 power = 100;
                 System.out.println(this.name + " is at full power!");
             }
@@ -159,39 +133,17 @@ public class Rover
      */
     private String getDirectionName(int dir)
     {
-        if (dir == 0) {
-            return "North";
-        } 
-        else if (dir == 1) {
-            return "NorthEast";
-        } 
-        else if (dir == 2) {
-            return "East";
-        } 
-        else if (dir == 3) {
-            return "SouthEast";
-        } 
-        else if (dir == 4) {
-            return "South";
-        } 
-        else if (dir == 5) {
-            return "SouthWest";
-        } 
-        else if (dir == 6) {
-            return "West";
-        } 
-        else {
-            return "NorthWest";
-        } 
+        String[] directionNames = {"North", "NorthEast", "East", "SouthEast", "South", "SouthWest", "West", "NorthWest"};
+        return directionNames[dir];
     }
         
     /** Rotates the rover once to the right 
      */
     public void rotateRight()
     {
-        //  It takes 2 power to turn
-        if (!willWork(2)) {
-            findWhatsWrong(2);
+        int energyRequired = 2;
+        if (!willWork(energyRequired)) {
+            findWhatsWrong(energyRequired);
         }
         
         else {
@@ -199,7 +151,7 @@ public class Rover
             if (dir > 7) {
                 dir -= 8;
             }
-            this.power -= 2;
+            this.power -= energyRequired;
             
             System.out.println(this.name + " turned to the right! " 
             + this.name + " is now facing "+ getDirectionName(dir) + "!");
@@ -210,8 +162,9 @@ public class Rover
     */
     public void rotateLeft()
     {
-        if (!willWork(2)) {
-            findWhatsWrong(2);
+        int energyRequired = 2;
+        if (!willWork(energyRequired)) {
+            findWhatsWrong(energyRequired);
         }
         
         else {
@@ -220,7 +173,7 @@ public class Rover
                 dir += 8;
             }
             
-            this.power -= 2;
+            this.power -= energyRequired;
             
             System.out.println(this.name + " turned to the left! " + this.name
             + " is now facing " + getDirectionName(dir) + "!");
@@ -234,8 +187,10 @@ public class Rover
     */
     public void rotate(int amount)
     {
-        if (!willWork(2 * Math.abs(amount))) {
-            findWhatsWrong(2* Math.abs(amount));
+        int energyRequired = 2 * Math.abs(amount);
+        
+        if (!willWork(energyRequired)) {
+            findWhatsWrong(energyRequired);
         }
         
         else {
@@ -250,7 +205,7 @@ public class Rover
                 }
             }
             
-            this.power -= (2 * Math.abs(amount));
+            this.power -= energyRequired;
             
             System.out.println(this.name + " turned " + Math.abs(amount)
             + " times! " + this.name
@@ -265,9 +220,9 @@ public class Rover
      */
     public void move(int amount)
     {
-        // takes 5 power to move per unit
-        if (!willWork(5 * amount)) {
-            findWhatsWrong(5 * amount);
+        int energyRequired = 5;
+        if (!willWork(energyRequired)) {
+            findWhatsWrong(energyRequired);
         }
         
         else {
@@ -299,7 +254,7 @@ public class Rover
                 x -= amount;
                 y += amount;
             } 
-            this.power -= (5 * amount);
+            this.power -= energyRequired;
             
             System.out.println(this.name + " moved " + amount + " spaces forward!");
         } 
@@ -484,9 +439,9 @@ public class Rover
             
         {
         int critical = (int)(10 * Math.random());
-        
-            if (!willWork(10)) {
-                findWhatsWrong(10);
+        int energyRequired = 10;
+            if (!willWork(energyRequired)) {
+                findWhatsWrong(energyRequired);
             }
             else {
                 System.out.println(this.name + " shoots " + other.name + "!");
@@ -510,7 +465,7 @@ public class Rover
                     + " health!");
                     
                 }   
-                this.power -= 10;
+                this.power -= energyRequired;
         } 
     }
     
@@ -521,14 +476,15 @@ public class Rover
      * @param y   vertical location of the desired location  
      */
     public void teleport(int x, int y) {
-        if (!willWork(50)) {
-            findWhatsWrong(50);
+        int energyRequired = 50;
+        if (!willWork(energyRequired)) {
+            findWhatsWrong(energyRequired);
         }
         
         else {
             this.x = x;
             this.y = y;
-            this.power -= 50;
+            this.power -= energyRequired;
             
             System.out.println("OwO!!! " + this.name + " teleported!");
             }   
@@ -538,15 +494,16 @@ public class Rover
      * Adds 1 to the numPics variable unless the rover already has 5 photos
      */
     public void takePicture() {
-        if (!willWork(1)) {
-            findWhatsWrong(1);
+        int energyRequired = 1;
+        if (!willWork(energyRequired)) {
+            findWhatsWrong(energyRequired);
         }
         
         else {
             // the rover cant take more than 5 photos
-            if (numPics < 5) {
+            if (numPics < memory) {
                 this.numPics += 1;
-                this.power -= 1;
+                this.power -= energyRequired;
                 
                 System.out.println("My boy, " + this.name + ", took a picture at ("
                 + this.x + ", " + this.y + "), facing " + getDirectionName(this.dir) 
@@ -562,13 +519,14 @@ public class Rover
      * Sends all pics away and sets numPics = 0
      */
     public void transmitPicture() {
-        if (!willWork(5)) {
-            findWhatsWrong(5);
+        int energyRequired = 5;
+        if (!willWork(energyRequired)) {
+            findWhatsWrong(energyRequired);
         }
         
         else{
             this.numPics = 0;
-            this.power -= 5;
+            this.power -= energyRequired;
             
             System.out.println(this.name + "transmitted his photos back to Earth! He now has nothing to call his own..");
         }
